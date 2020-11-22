@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<body>
+    <h1>Logger</h1>
+    <label>Log Message</label><br/>
+    <textarea rows="20" cols="100" id="logMessage" placeholder="Enter log message here" aria-label="logMessage"></textarea>
+    <br />
+    <button onclick="postLog()">Send</button>
+    <br /><br />
+    <hr />
+    <div id="respId">Resp:</div>
+    <hr />
+    <h2>Logs</h2>
+    <ul id="logList">
+
+    </ul>
+
+    <script>
+        const postLog = async () => {
+
+            const bodyObj = {
+                message: document.getElementById('logMessage').value,
+            };
+
+            const options = {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify(bodyObj)
+            };
+            try {
+                const response = await fetch('/log', options);
+                const json = await response.json();
+                console.log('json:' + json);
+                document.getElementById('respId').innerHTML = JSON.stringify(json);
+                document.getElementById('logMessage').value = "";
+                getLogs();
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        const getLogs = async () => {
+            try {
+                const response = await fetch('/log');
+                if (response.ok) {
+                    const json = await response.json();
+
+                    const ul = document.getElementById("logList");
+                    ul.innerHTML = "";
+                    json.logList.forEach(logEntry => {
+                        console.log(JSON.stringify(logEntry));
+                        const li = document.createElement("li");
+                        li.innerHTML = logEntry.message + "<br/>" + logEntry.timestamp;
+                        ul.appendChild(li);
+                    });
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        getLogs();
+    </script>
+
+</body>
+
+</html>

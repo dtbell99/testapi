@@ -1,0 +1,11 @@
+### Post
+POST http://localhost:8080/log
+content-type: application/json
+
+{
+    "message": "Test Message"
+}
+
+### Get
+
+GET http://localhost:8080/log
